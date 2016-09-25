@@ -22,8 +22,17 @@ namespace TheUnseenLibrary
             db.ClearDb();
 
             int rootId = db.Pages.Create("Root", -1);
-            db.Pages.Create("Cities", rootId);
-            db.Pages.Create("People", rootId);
+            int cityId = db.Pages.Create("Cities", rootId);
+            int peopleId = db.Pages.Create("People", rootId);
+
+
+            db.Sections.CreatePage(rootId, 1, peopleId);
+            db.Sections.CreateLink(rootId, 0, "Cities", cityId);
+
+            db.Sections.CreateText(cityId, 0, "City", "1000");
+
+            db.Sections.CreateText(peopleId, 1, "Summer", "Master");
+            db.Sections.CreateText(peopleId, 0, "Pop", "1000");
 
             var pages = db.Pages.GetAll();
             string labelText = "";
@@ -36,6 +45,25 @@ namespace TheUnseenLibrary
                 else
                 {
                     labelText += page.Name + Environment.NewLine;
+                }
+
+                foreach (var section in page.Sections)
+                {
+                    if (section is LinkSection)
+                    {
+                        LinkSection linkSection = (LinkSection) section;
+                        labelText += "---" + section.Title + " - " + linkSection.Page.Sections[0].Title + Environment.NewLine;
+                    }
+                    else if (section is PageSection)
+                    {
+                        PageSection pageSection = (PageSection)section;
+                        labelText += "---" + section.Title + " - " + pageSection.Page.Sections[0].Title + " - " + ((TextSection)pageSection.Page.Sections[0]).Body + Environment.NewLine;
+                    }
+                    else
+                    {
+                        TextSection textSection = (TextSection)section;
+                        labelText += "---" + textSection.Title + " - " + textSection.Body + Environment.NewLine;
+                    }
                 }
             }
             label1.Text = labelText;

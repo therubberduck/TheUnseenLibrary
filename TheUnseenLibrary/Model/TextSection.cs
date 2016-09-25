@@ -9,7 +9,14 @@ namespace TheUnseenLibrary.Model
 {
     public class TextSection : Section
     {
-        public TextSection(DbInterface db, long sectionId, long pageId, string sectionType, int index, long childId, string text) : base(db, sectionId, pageId, sectionType, index, childId, text)
+        public string Body
+        {
+            get { return Text; }
+            set { Text = value; }
+        }
+
+
+        public TextSection(DbInterface db, long sectionId, int index, string title, long childId, string text) : base(db, sectionId, index, title, childId, text)
         {
         }
     }

@@ -18,7 +18,7 @@ namespace TheUnseenLibrary.Database.DbObject
         public Page Parent {
             get
             {
-                if (_sections == null && _parentId != -1)
+                if (_parent == null && _parentId != -1)
                 {
                     _parent = _db.Pages.Get(_parentId);
                 }

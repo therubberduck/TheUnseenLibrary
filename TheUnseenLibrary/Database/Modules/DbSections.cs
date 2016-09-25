@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheUnseenLibrary.Database.DbObject;
 using TheUnseenLibrary.Database.WorkingFiles;
 using TheUnseenLibrary.Model;
 
@@ -10,7 +11,7 @@ namespace TheUnseenLibrary.Database.Modules
 {
     public class DbSections :DbObjectModule<Section>
     {
-        public override string TableName => "Containers";
+        public override string TableName => "Sections";
 
         public override DbColumn[] AllColumns => new[]
         {
@@ -18,6 +19,7 @@ namespace TheUnseenLibrary.Database.Modules
             new DbColumn(PageId, DbColumn.Integer),
             new DbColumn(Type, DbColumn.Text),
             new DbColumn(SectionIndex, DbColumn.Integer),
+            new DbColumn(Title, DbColumn.Text),
             new DbColumn(ChildId, DbColumn.Integer),
             new DbColumn(Text, DbColumn.Text)
         };
@@ -25,11 +27,33 @@ namespace TheUnseenLibrary.Database.Modules
         public const string PageId = "PageId";
         public const string Type = "Type";
         public const string SectionIndex = "SectionIndex";
+        public const string Title = "Title";
         public const string ChildId = "ChildId";
         public const string Text = "Text";
 
         public DbSections(DbInterface dbInterface, SqLiteDb db) : base(dbInterface, db)
         {
+        }
+
+        public long CreateLink(long pageId, int index, string title, long childId)
+        {
+            return Db.Insert(TableName,
+                new[] { PageId, Type, SectionIndex, Title, ChildId },
+                new object[] { pageId, DboSection.LinkSection, index, title, childId });
+        }
+
+        public long CreatePage(long pageId, int index, long childId)
+        {
+            return Db.Insert(TableName,
+                new[] { PageId, Type, SectionIndex, ChildId },
+                new object[] { pageId, DboSection.PageSection, index, childId });
+        }
+
+        public long CreateText(long pageId, int index, string title, string text)
+        {
+            return Db.Insert(TableName,
+                new[] { PageId, Type, SectionIndex, Title, Text },
+                new object[] { pageId, DboSection.TextSection, index, title, text });
         }
 
         public List<Section> GetSectionsForPageId(long pageId)
@@ -49,25 +73,27 @@ namespace TheUnseenLibrary.Database.Modules
 
         protected override Section MakeObject(object[] dbObject)
         {
-            var id = (long)dbObject[0];
-            var pageId = (int)dbObject[1];
-            var type = (string)dbObject[2];
-            var index = (int)dbObject[3];
-            var childId = (int)dbObject[4];
-            var text = (string)dbObject[5];
+            DbResultReader reader = new DbResultReader(dbObject);
+            var id = reader.ReadLong();
+            reader.SkipColumn();
+            var type = reader.ReadString();
+            var index = reader.ReadInt();
+            string title = reader.ReadString();
+            var childId = reader.ReadLong();
+            string text = reader.ReadString();
 
             Section section = null;
-            if (type.Equals(Section.LinkSection))
+            if (type.Equals(DboSection.LinkSection))
             {
-                section = new LinkSection(DbInterface, id, pageId, type, index, childId, text);
+                section = new LinkSection(DbInterface, id, index, title, childId, text);
             }
-            else if (type.Equals(Section.PageSection))
+            else if (type.Equals(DboSection.PageSection))
             {
-                section = new PageSection(DbInterface, id, pageId, type, index, childId, text);
+                section = new PageSection(DbInterface, id, index, title, childId, text);
             }
-            else if (type.Equals(Section.TextSection))
+            else if (type.Equals(DboSection.TextSection))
             {
-                section = new TextSection(DbInterface, id, pageId, type, index, childId, text);
+                section = new TextSection(DbInterface, id, index, title, childId, text);
             }
             return section;
         }

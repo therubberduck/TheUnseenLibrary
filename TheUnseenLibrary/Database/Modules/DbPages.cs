@@ -32,9 +32,10 @@ namespace TheUnseenLibrary.Database.Modules
 
         protected override Page MakeObject(object[] dbObject)
         {
-            var id = (long)dbObject[0];
-            var parentPageId = (long)dbObject[1];
-            var name = (string)dbObject[2];
+            DbResultReader reader = new DbResultReader(dbObject);
+            var id = reader.ReadLong();
+            var parentPageId = reader.ReadLong();
+            var name = reader.ReadString();
 
             var page = new Page(DbInterface, id, parentPageId, name);
 

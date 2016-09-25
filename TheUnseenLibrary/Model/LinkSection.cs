@@ -9,7 +9,13 @@ namespace TheUnseenLibrary.Model
 {
     public class LinkSection : Section
     {
-        public LinkSection(DbInterface db, long sectionId, long pageId, string sectionType, int index, long childId, string text) : base(db, sectionId, pageId, sectionType, index, childId, text)
+        public Page Page
+        {
+            get { return ChildPage; }
+            set { ChildPage = value; }
+        }
+
+        public LinkSection(DbInterface db, long sectionId, int index, string title, long childId, string text) : base(db, sectionId, index, title, childId, text)
         {
         }
     }

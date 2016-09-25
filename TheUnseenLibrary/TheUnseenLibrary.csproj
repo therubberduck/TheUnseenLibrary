@@ -82,6 +82,7 @@
     <Compile Include="Database\WorkingFiles\DbColumn.cs" />
     <Compile Include="Database\WorkingFiles\DbModule.cs" />
     <Compile Include="Database\WorkingFiles\DbObjectModule.cs" />
+    <Compile Include="Database\WorkingFiles\DbResultReader.cs" />
     <Compile Include="Database\WorkingFiles\IDbModule.cs" />
     <Compile Include="Database\WorkingFiles\SqLiteDb.cs" />
     <Compile Include="Model\LinkSection.cs" />
