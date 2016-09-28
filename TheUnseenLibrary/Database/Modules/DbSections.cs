@@ -49,11 +49,25 @@ namespace TheUnseenLibrary.Database.Modules
                 new object[] { pageId, DboSection.PageSection, index, childId });
         }
 
+        public long CreatePlainText(long pageId, int index, string text)
+        {
+            return Db.Insert(TableName,
+                new[] { PageId, Type, SectionIndex, Text },
+                new object[] { pageId, DboSection.TextSection, index, text });
+        }
+
         public long CreateText(long pageId, int index, string title, string text)
         {
             return Db.Insert(TableName,
                 new[] { PageId, Type, SectionIndex, Title, Text },
                 new object[] { pageId, DboSection.TextSection, index, title, text });
+        }
+
+        public long CreateTitle(long pageId, int index, string title)
+        {
+            return Db.Insert(TableName,
+                new[] { PageId, Type, SectionIndex, Title },
+                new object[] { pageId, DboSection.TextSection, index, title });
         }
 
         public List<Section> GetSectionsForPageId(long pageId)

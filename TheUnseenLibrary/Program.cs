@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using TheUnseenLibrary.Database;
 
 namespace TheUnseenLibrary
 {
@@ -17,7 +18,34 @@ namespace TheUnseenLibrary
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            
+            DbInterface db = new DbInterface();
+
+            db.ClearDb();
+
+            int rootId = db.Pages.Create("Root", -1);
+            int cityId = db.Pages.Create("Cities", rootId);
+            int peopleId = db.Pages.Create("People", rootId);
+            int missionId = db.Pages.Create("Missions", rootId);
+
+
+            db.Sections.CreatePage(rootId, 1, peopleId);
+            db.Sections.CreateLink(rootId, 0, "Cities", cityId);
+
+            db.Sections.CreateText(cityId, 0, "City", "1000");
+            db.Sections.CreateTitle(cityId, 2, "Quarter of Fools");
+            db.Sections.CreatePlainText(cityId, 3, "This is a quiet place.");
+            db.Sections.CreatePlainText(cityId, 4, "Not many people live here.");
+            db.Sections.CreateTitle(cityId, 5, "Links");
+            db.Sections.CreateLink(cityId, 6, "People", peopleId);
+            db.Sections.CreateLink(cityId, 7, "Missions", missionId);
+
+            db.Sections.CreateText(peopleId, 0, "Pop", "1000");
+            db.Sections.CreateText(peopleId, 1, "Summer", "Master");
+
+            var rootPage = db.Pages.GetRoot();
+
+            Application.Run(new PageForm(db, rootPage));
         }
     }
 }

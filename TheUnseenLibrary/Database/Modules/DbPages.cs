@@ -28,7 +28,15 @@ namespace TheUnseenLibrary.Database.Modules
             return Db.Insert(TableName,
                 new[] { ParentPageId, Name },
                 new object[] { parentId, name });
-    }
+        }
+
+        public Page GetRoot()
+        {
+            var results = Db.Select(TableName, AllColumnNames, ParentPageId, -1);
+            var result = (object[])results[0];
+            var resultObject = MakeObject(result);
+            return resultObject;
+        }
 
         protected override Page MakeObject(object[] dbObject)
         {
