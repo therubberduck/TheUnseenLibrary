@@ -85,41 +85,54 @@
     <Compile Include="Database\WorkingFiles\DbResultReader.cs" />
     <Compile Include="Database\WorkingFiles\IDbModule.cs" />
     <Compile Include="Database\WorkingFiles\SqLiteDb.cs" />
+    <Compile Include="Events\EventHandler.cs" />
+    <Compile Include="Events\SimpleEvent.cs" />
+    <Compile Include="Events\PageChangeEvent.cs" />
+    <Compile Include="Helper\ErrorService.cs" />
+    <Compile Include="Helper\NavigationHandler.cs" />
     <Compile Include="Model\LinkSection.cs" />
     <Compile Include="Model\PageSection.cs" />
     <Compile Include="Model\Section.cs" />
     <Compile Include="Model\TextSection.cs" />
-    <Compile Include="UI\PageForm.cs">
+    <Compile Include="Presenter\Menu\MenuCmdNavigationBackwards.cs" />
+    <Compile Include="Presenter\Menu\MenuCmdNavigationForward.cs" />
+    <Compile Include="UI\Base\AddControl.cs" />
+    <Compile Include="UI\Base\AutoLayout.cs" />
+    <Compile Include="UI\Base\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\PageForm.Designer.cs">
-      <DependentUpon>PageForm.cs</DependentUpon>
+    <Compile Include="UI\Base\BaseUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\CustomViews\AutoResizingTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomViews\PageFlowPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Menu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\PageForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Model\Container.cs" />
     <Compile Include="Model\Page.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\LinkSectionCell.cs">
+    <Compile Include="Presenter\PagePresenter.cs" />
+    <Compile Include="UI\SectionCells\LinkSectionCell.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\LinkSectionCell.Designer.cs">
-      <DependentUpon>LinkSectionCell.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\TextSectionCell.cs">
+    <Compile Include="UI\SectionCells\PageSectionCell.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\TextSectionCell.Designer.cs">
-      <DependentUpon>TextSectionCell.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\PageSectionCell.cs">
+    <Compile Include="UI\SectionCells\TextSectionCell.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\PageSectionCell.Designer.cs">
-      <DependentUpon>PageSectionCell.cs</DependentUpon>
+    <Compile Include="UI\SectionCells\TextSectionEditCell.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <EmbeddedResource Include="UI\PageForm.resx">
-      <DependentUpon>PageForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -129,15 +142,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="UI\LinkSectionCell.resx">
-      <DependentUpon>LinkSectionCell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\TextSectionCell.resx">
-      <DependentUpon>TextSectionCell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\PageSectionCell.resx">
-      <DependentUpon>PageSectionCell.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Database\db.sqlite" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -154,6 +158,18 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\back-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\edit-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\forward-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.103\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net451\System.Data.SQLite.Core.targets')" />

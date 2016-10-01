@@ -1,132 +1,129 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TheUnseenLibrary.Database;
 using TheUnseenLibrary.Model;
-using TheUnseenLibrary.UI;
+using TheUnseenLibrary.Presenter;
+using TheUnseenLibrary.UI.Base;
+using TheUnseenLibrary.UI.CustomViews;
 
-namespace TheUnseenLibrary
+namespace TheUnseenLibrary.UI
 {
-    public partial class PageForm : Form
+    public interface IPageForm
     {
-        private DbInterface _db ;
-        private Page _page;
+        void SetTitle(string title);
+        void HideTitle();
+        void ShowTitle();
+        void SetSections(List<Section> sections);
+        void Show();
+    }
 
-        private List<long> _navigationStack;
-        private int _navigationIndex;
+    public class PageForm : BaseForm, IPageForm
+    {
+        private Menu _menu;
+        private Label _lblTitle;
+        private PageFlowPanel _flwPanelSections;
 
-        public PageForm(DbInterface db, Page page)
+        public PageForm()
         {
-            InitializeComponent();
-
-            _db = db;
-            _page = page;
-
-            Initialize();
+            CreateControls();
+            LayoutControls();
+            SetAppearance();
+            SetupControls();
         }
 
-        public PageForm(DbInterface db, long pageId)
+        private void CreateControls()
         {
-            InitializeComponent();
+            Name = "PageForm";
 
-            _db = db;
-            _page = db.Pages.Get(pageId);
+            _menu = new Menu(this);
+            _menu.Name = "menu";
+            _menu.TabIndex = 0;
+            this.Controls.Add(_menu);
 
-            Initialize();
+            _lblTitle = this.AddLabel("lblTitle", 1);
+
+            _flwPanelSections = this.AddPageFlowPanel("flwPanel", 2);
         }
 
-        public void Initialize()
+        private void LayoutControls()
         {
-            _navigationStack = new List<long> {_page.PageId};
-            _navigationIndex = 0;
+            SuspendLayout();
+            _menu.SuspendLayout();
+            _flwPanelSections.SuspendLayout();
 
-            SetupSections();
+            ClientSize = new Size(1000, 1000);
+            AutoScaleMode = AutoScaleMode.Font;
+
+            //
+            // Menu
+            //
+            _menu.Location = new Point(0, 0);
+            _menu.Size = new Size(1000, 64);
+            _menu.AnchorTopAndSides();
+
+            //
+            // lblTitle
+            //
+            _lblTitle.Location = new Point(10, 64);
+            _lblTitle.Size = new Size(1000, 40);
+            _lblTitle.AnchorTopAndSides();
+
+            // 
+            // flwPanelSections
+            // 
+            _flwPanelSections.Location = new Point(0, 104);
+            _flwPanelSections.Size = new Size(1000, 896);
+            _flwPanelSections.AnchorAllSides();
+
+            ResumeLayout(false);
+            _menu.ResumeLayout(false);
+            _flwPanelSections.ResumeLayout(false);
         }
 
-        public void ChangePageTo(long pageId)
+        private void SetAppearance()
         {
-            _page = _db.Pages.Get(pageId);
+            Text = "Page";
+            BackColor = Color.White;
 
-            int index = _navigationIndex + 1;
-            int count = _navigationStack.Count - index;
-            _navigationStack.RemoveRange(index, count); //Remove any pages on the stack after our current index
-            _navigationStack.Add(_page.PageId); //Add the new page to the stack
-            _navigationIndex++; //Increase index by 1
-
-            ClearSections();
-            SetupSections();
+            _lblTitle.TextAlign = ContentAlignment.MiddleLeft;
+            _lblTitle.Font = new Font("Microsoft Sans Serif", 16F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(0)));
+            _lblTitle.Text = "Title";
         }
 
-        private void SetupSections()
+        private void SetupControls()
         {
-            foreach (var section in _page.Sections)
+            _flwPanelSections.AutoScroll = true;
+        }
+
+        public void SetTitle(string title)
+        {
+            _lblTitle.Text = title;
+        }
+
+        public void HideTitle()
+        {
+            _lblTitle.Hide();
+
+            _flwPanelSections.Location = new Point(0, 64);
+            _flwPanelSections.Size = new Size(1000, 936);
+        }
+
+        public void ShowTitle()
+        {
+            if (!_lblTitle.Visible)
             {
-                if (section is LinkSection)
-                {
-                    LinkSection linkSection = (LinkSection)section;
+                _lblTitle.Show();
 
-                    var cell = new LinkSectionCell(_db, linkSection.ChildPageId, this);
-                    cell.SetTitle(linkSection.Title);
-                    flwPanel.Controls.Add(cell);
-                }
-                else if (section is PageSection)
-                {
-                    PageSection pageSection = (PageSection)section;
-
-                    var cell = new PageSectionCell(_db, pageSection.Page, this);
-                    flwPanel.Controls.Add(cell);
-                }
-                else
-                {
-                    TextSection textSection = (TextSection)section;
-
-                    var cell = new TextSectionCell();
-                    cell.SetLabels(textSection.Title, textSection.Body);
-                    flwPanel.Controls.Add(cell);
-                }
+                _flwPanelSections.Location = new Point(0, 104);
+                _flwPanelSections.Size = new Size(1000, 896);
             }
         }
 
-        private void ClearSections()
+        public void SetSections(List<Section> sections)
         {
-            flwPanel.Controls.Clear();
-        }
-
-        //
-        // Menu Strip Items
-        //
-
-        private void tsmiBack_Click(object sender, EventArgs e)
-        {
-            if (_navigationIndex > 0)
-            {
-                _navigationIndex--;
-                long pageId = _navigationStack[_navigationIndex];
-
-                _page = _db.Pages.Get(pageId);
-
-                ClearSections();
-                SetupSections();
-            }
-        }
-
-        private void tsmiForward_Click(object sender, EventArgs e)
-        {
-            if (_navigationIndex < _navigationStack.Count - 1)
-            {
-                _navigationIndex++;
-                long pageId = _navigationStack[_navigationIndex];
-
-                _page = _db.Pages.Get(pageId);
-
-                ClearSections();
-                SetupSections();
-            }
+            _flwPanelSections.SetSections(sections);
         }
     }
 }

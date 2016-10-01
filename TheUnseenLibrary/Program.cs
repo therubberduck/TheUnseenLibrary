@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using TheUnseenLibrary.Database;
+using TheUnseenLibrary.Presenter;
+using TheUnseenLibrary.UI;
 
 namespace TheUnseenLibrary
 {
@@ -29,8 +31,8 @@ namespace TheUnseenLibrary
             int missionId = db.Pages.Create("Missions", rootId);
 
 
-            db.Sections.CreatePage(rootId, 1, peopleId);
-            db.Sections.CreateLink(rootId, 0, "Cities", cityId);
+            db.Sections.CreatePage(rootId, 0, peopleId);
+            db.Sections.CreateLink(rootId, 1, "Cities", cityId);
 
             db.Sections.CreateText(cityId, 0, "City", "1000");
             db.Sections.CreateTitle(cityId, 2, "Quarter of Fools");
@@ -45,7 +47,8 @@ namespace TheUnseenLibrary
 
             var rootPage = db.Pages.GetRoot();
 
-            Application.Run(new PageForm(db, rootPage));
+            var pagePresenter = new PagePresenter(db, rootPage);
+            Application.Run(pagePresenter.Form);
         }
     }
 }

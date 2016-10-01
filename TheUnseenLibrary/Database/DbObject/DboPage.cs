@@ -13,14 +13,14 @@ namespace TheUnseenLibrary.Database.DbObject
 
         public long PageId { get; set; }
 
-        private long _parentId;
+        protected long ParentId;
         private Page _parent;
         public Page Parent {
             get
             {
-                if (_parent == null && _parentId != -1)
+                if (_parent == null && ParentId != -1)
                 {
-                    _parent = _db.Pages.Get(_parentId);
+                    _parent = _db.Pages.Get(ParentId);
                 }
                 return _parent;
             }
@@ -47,7 +47,7 @@ namespace TheUnseenLibrary.Database.DbObject
         {
             _db = db;
             PageId = pageId;
-            _parentId = parentId;
+            ParentId = parentId;
             Name = name;
         }
     }

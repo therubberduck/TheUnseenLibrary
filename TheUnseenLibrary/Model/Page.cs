@@ -13,5 +13,7 @@ namespace TheUnseenLibrary.Model
         public Page(DbInterface db, long pageId, long parentId, string name) : base(db, pageId, parentId, name)
         {
         }
+
+        public bool IsRoot => ParentId == -1;
     }
 }
